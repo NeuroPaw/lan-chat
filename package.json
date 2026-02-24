@@ -1,0 +1,19 @@
+{
+  "name": "lan-chat",
+  "version": "1.0.0",
+  "description": "局域网聊天室 - 支持文本、文件、图片",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["lan", "chat", "p2p"],
+  "author": "小爪",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "socket.io": "^4.8.3",
+    "uuid": "^13.0.0"
+  }
+}

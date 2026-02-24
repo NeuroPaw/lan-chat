@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>局域网聊天室</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; height: 100vh; overflow: hidden; }
+        
+        /* 登录 */
+        .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
+        .login-box h2 { margin-bottom: 10px; }
+        .login-box p { color: #666; margin-bottom: 20px; font-size: 14px; }
+        .login-box input { width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; margin-bottom: 15px; }
+        .login-box input:focus { border-color: #667eea; outline: none; }
+        .btn { padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; }
+        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 100%; }
+        .hidden { display: none !important; }
+        
+        /* 主界面 */
+        .container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background: white; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #e0e0e0; }
+        .sidebar-title { font-weight: 700; margin-bottom: 10px; }
+        .online-count { background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; }
+        .user-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .user-item { display: flex; align-items: center; padding: 10px; border-radius: 8px; }
+        .user-item:hover { background: #f5f5f5; }
+        .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 10px; }
+        .user-name { font-size: 14px; font-weight: 600; }
+        .user-ip { font-size: 11px; color: #999; }
+        .you-badge { background: #667eea; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 5px; }
+        
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; }
+        .header-title { font-weight: 700; }
+        .server-ip { font-family: monospace; background: #f0f0f0; padding: 5px 10px; border-radius: 5px; font-size: 12px; }
+        
+        .chat-area { flex: 1; overflow-y: auto; padding: 20px; background: #f5f5f5; }
+        .message { display: flex; margin-bottom: 15px; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        .message.own { flex-direction: row-reverse; }
+        .message-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; margin: 0 10px; flex-shrink: 0; }
+        .message-content { max-width: 70%; }
+        .message-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 12px; }
+        .message.own .message-header { justify-content: flex-end; }
+        .message-author { font-weight: 600; }
+        .message-time { color: #999; }
+        .message-bubble { background: white; padding: 12px 16px; border-radius: 18px; border-bottom-left-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); word-break: break-word; }
+        .message.own .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-bottom-left-radius: 18px; border-bottom-right-radius: 4px; }
+        .message-image { max-width: 250px; max-height: 250px; border-radius: 10px; cursor: pointer; }
+        .message-file { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 10px; text-decoration: none; color: inherit; }
+        .file-icon { width: 40px; height: 40px; background: #667eea; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+        .file-name { font-weight: 600; font-size: 14px; }
+        .file-size { font-size: 12px; color: #666; }
+        .system-message { text-align: center; padding: 10px; color: #666; font-size: 13px; }
+        
+        .input-area { background: white; border-top: 1px solid #e0e0e0; padding: 15px 20px; }
+        .input-container { display: flex; gap: 10px; align-items: flex-end; }
+        .btn-icon { width: 40px; height: 40px; border: none; background: #f0f0f0; border-radius: 50%; cursor: pointer; font-size: 18px; }
+        .btn-icon:hover { background: #e0e0e0; }
+        .message-input { flex: 1; border: 1px solid #e0e0e0; border-radius: 20px; padding: 10px 15px; font-size: 15px; outline: none; resize: none; min-height: 40px; max-height: 100px; font-family: inherit; }
+        .message-input:focus { border-color: #667eea; }
+        .btn-send { width: 40px; height: 40px; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 50%; cursor: pointer; font-size: 16px; }
+        
+        /* 移动端 */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 200; transform: translateX(-100%); transition: transform 0.3s; }
+            .sidebar.open { transform: translateX(0); }
+            .menu-btn { display: block !important; background: none; border: none; font-size: 24px; margin-right: 10px; cursor: pointer; }
+            .server-ip { display: none; }
+            .message-content { max-width: 80%; }
+            .message-image { max-width: 180px; max-height: 180px; }
+            .chat-area { padding: 10px; }
+        }
+        .menu-btn { display: none; }
+        
+        /* 图片预览 */
+        .image-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .image-modal.active { display: flex; }
+        .image-modal img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h2>💬 加入聊天室</h2>
+            <p>同一WiFi下的设备可以互相聊天</p>
+            <input type="text" id="usernameInput" placeholder="输入你的昵称" maxlength="20">
+            <button class="btn btn-primary" onclick="joinChat()">进入聊天室</button>
+        </div>
+    </div>
+
+    <div class="image-modal" id="imageModal" onclick="this.classList.remove('active')">
+        <img src="" id="previewImage">
+    </div>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">在线用户</div>
+                <div class="online-count" id="onlineCount">0 人在线</div>
+            </div>
+            <div class="user-list" id="userList"></div>
+        </aside>
+
+        <main class="main">
+            <header class="header">
+                <div style="display:flex;align-items:center;">
+                    <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+                    <div>
+                        <div class="header-title">局域网聊天室</div>
+                    </div>
+                </div>
+                <div class="server-ip" id="serverIp">192.168.1.66:3000</div>
+            </header>
+
+            <div class="chat-area" id="chatArea"></div>
+
+            <div class="input-area">
+                <div class="input-container">
+                    <button class="btn-icon" onclick="document.getElementById('imageInput').click()">🖼️</button>
+                    <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="sendImage()">
+                    
+                    <button class="btn-icon" onclick="document.getElementById('fileInput').click()">📎</button>
+                    <input type="file" id="fileInput" style="display:none" onchange="sendFile()">
+                    
+                    <textarea class="message-input" id="messageInput" placeholder="输入消息..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+                    
+                    <button class="btn-send" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+const socket = io();
+
+// 获取IP
+fetch('/ip').then(r=>r.text()).then(ip=>{
+    document.getElementById('serverIp').textContent = ip+':3000';
+}).catch(()=>{});
+
+// 恢复用户名
+const savedName = localStorage.getItem('lanChatUsername');
+if(savedName) document.getElementById('usernameInput').value = savedName;
+
+function joinChat(){
+    const input = document.getElementById('usernameInput');
+    const name = input.value.trim() || '匿名用户';
+    socket.emit('join', {name: name});
+    localStorage.setItem('lanChatUsername', name);
+    document.getElementById('loginOverlay').classList.add('hidden');
+}
+
+function sendMessage(){
+    const input = document.getElementById('messageInput');
+    const text = input.value.trim();
+    if(!text) return;
+    socket.emit('chatMessage', {text: text});
+    input.value = '';
+    input.style.height = 'auto';
+}
+
+async function sendImage(){
+    const input = document.getElementById('imageInput');
+    const file = input.files[0];
+    if(!file) return;
+    if(file.size > 10*1024*1024){ alert('图片不能超过10MB'); input.value=''; return; }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    try{
+        const res = await fetch('/upload', {method:'POST', body:formData});
+        const data = await res.json();
+        socket.emit('imageMessage', data);
+    }catch(e){ alert('发送失败'); }
+    input.value = '';
+}
+
+async function sendFile(){
+    const input = document.getElementById('fileInput');
+    const file = input.files[0];
+    if(!file) return;
+    if(file.size > 50*1024*1024){ alert('文件不能超过50MB'); input.value=''; return; }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    try{
+        const res = await fetch('/upload', {method:'POST', body:formData});
+        const data = await res.json();
+        socket.emit('fileMessage', data);
+    }catch(e){ alert('发送失败'); }
+    input.value = '';
+}
+
+function renderMessage(msg){
+    const area = document.getElementById('chatArea');
+    const isMe = msg.user.id === socket.id;
+    
+    let content = '';
+    if(msg.type === 'text'){
+        content = '<div class="message-bubble">'+escapeHtml(msg.text)+'</div>';
+    }else if(msg.type === 'image'){
+        content = '<img src="'+msg.url+'" class="message-image" onclick="showImage(this.src)">';
+    }else if(msg.type === 'file'){
+        content = '<a href="'+msg.url+'" class="message-file" download="'+msg.originalname+'"><div class="file-icon">📄</div><div><div class="file-name">'+escapeHtml(msg.originalname)+'</div><div class="file-size">'+formatSize(msg.size)+'</div></div></a>';
+    }
+    
+    const html = '<div class="message '+(isMe?'own':'')+'"><div class="message-avatar">'+msg.user.name.charAt(0).toUpperCase()+'</div><div class="message-content"><div class="message-header"><span class="message-author">'+escapeHtml(msg.user.name)+'</span><span class="message-time">'+formatTime(msg.timestamp)+'</span></div>'+content+'</div></div>';
+    
+    area.insertAdjacentHTML('beforeend', html);
+    area.scrollTop = area.scrollHeight;
+}
+
+function updateUsers(users){
+    const list = document.getElementById('userList');
+    document.getElementById('onlineCount').textContent = users.length+' 人在线';
+    list.innerHTML = users.map(u=>'<div class="user-item"><div class="user-avatar">'+u.name.charAt(0).toUpperCase()+'</div><div><div class="user-name">'+escapeHtml(u.name)+(u.id===socket.id?'<span class="you-badge">你</span>':'')+'</div><div class="user-ip">'+u.ip+'</div></div></div>').join('');
+}
+
+function showImage(src){
+    document.getElementById('previewImage').src = src;
+    document.getElementById('imageModal').classList.add('active');
+}
+
+function escapeHtml(text){
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function formatTime(ts){
+    const d = new Date(ts);
+    return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+
+function formatSize(bytes){
+    if(bytes < 1024) return bytes+' B';
+    if(bytes < 1024*1024) return (bytes/1024).toFixed(1)+' KB';
+    return (bytes/(1024*1024)).toFixed(1)+' MB';
+}
+
+// Socket事件
+socket.on('history', messages => messages.forEach(renderMessage));
+socket.on('message', renderMessage);
+
+socket.on('userJoined', data => {
+    updateUsers(data.onlineUsers);
+    document.getElementById('chatArea').insertAdjacentHTML('beforeend', '<div class="system-message">👋 '+data.user.name+' 加入了</div>');
+});
+
+socket.on('userLeft', data => {
+    updateUsers(data.onlineUsers);
+    document.getElementById('chatArea').insertAdjacentHTML('beforeend', '<div class="system-message">👋 '+data.user.name+' 离开了</div>');
+});
+
+// 回车登录
+document.getElementById('usernameInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') joinChat();
+});
+    </script>
+</body>
+</html>

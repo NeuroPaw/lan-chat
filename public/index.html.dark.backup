@@ -27,13 +27,13 @@
                         sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
                     colors: {
-                        background: '#ffffff',
-                        foreground: '#0a0a0a',
-                        primary: '#171717',
-                        secondary: '#f5f5f5',
-                        muted: '#f5f5f5',
-                        'muted-foreground': '#737373',
-                        border: '#e5e5e5',
+                        background: '#0a0a0a',
+                        foreground: '#fafafa',
+                        primary: '#e5e5e5',
+                        secondary: '#171717',
+                        muted: '#171717',
+                        'muted-foreground': '#a3a3a3',
+                        border: '#262626',
                         accent: '#22c55e',
                     },
                     borderRadius: {
@@ -46,13 +46,13 @@
     
     <style>
         :root {
-            --background: #ffffff;
-            --foreground: #0a0a0a;
-            --primary: #171717;
-            --secondary: #f5f5f5;
-            --muted: #f5f5f5;
-            --muted-foreground: #737373;
-            --border: #e5e5e5;
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --primary: #e5e5e5;
+            --secondary: #171717;
+            --muted: #171717;
+            --muted-foreground: #a3a3a3;
+            --border: #262626;
             --accent: #22c55e;
             --radius: 0.625rem;
         }
@@ -143,7 +143,7 @@
         
         /* Glass effect for overlay */
         .glass {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
@@ -159,20 +159,20 @@
 <body>
     <!-- Login Overlay -->
     <div id="loginOverlay" class="fixed inset-0 glass flex items-center justify-center z-50 p-4">
-        <div class="bg-[#f5f5f5] border border-[#e5e5e5] rounded-xl p-8 w-full max-w-md animate-fadeIn">
+        <div class="bg-[#171717] border border-[#262626] rounded-xl p-8 w-full max-w-md animate-fadeIn">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <i data-lucide="message-circle" class="w-8 h-8 text-black"></i>
+                    <i data-lucide="message-circle" class="w-8 h-8 text-white"></i>
                 </div>
-                <h2 class="text-2xl font-semibold text-black mb-2">加入聊天室</h2>
-                <p class="text-[#737373] text-sm">同一 WiFi 下的设备可以互相聊天</p>
+                <h2 class="text-2xl font-semibold text-white mb-2">加入聊天室</h2>
+                <p class="text-[#a3a3a3] text-sm">同一 WiFi 下的设备可以互相聊天</p>
             </div>
             
             <input 
                 type="text" 
                 id="usernameInput" 
                 placeholder="输入你的昵称" 
-                class="w-full bg-white border border-[#e5e5e5] rounded-lg px-4 py-3 text-black placeholder-[#525252] input-focus transition-all mb-4"
+                class="w-full bg-[#0a0a0a] border border-[#262626] rounded-lg px-4 py-3 text-white placeholder-[#525252] input-focus transition-all mb-4"
                 maxlength="20"
                 autofocus
             >
@@ -197,16 +197,16 @@
     
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <aside id="sidebar" class="fixed md:relative left-0 top-0 bottom-0 w-72 bg-white border-r border-[#e5e5e5] flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+        <aside id="sidebar" class="fixed md:relative left-0 top-0 bottom-0 w-72 bg-[#0a0a0a] border-r border-[#262626] flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
             <!-- Sidebar Header -->
-            <div class="p-4 border-b border-[#e5e5e5]">
+            <div class="p-4 border-b border-[#262626]">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                        <i data-lucide="users" class="w-5 h-5 text-black"></i>
+                        <i data-lucide="users" class="w-5 h-5 text-white"></i>
                     </div>
                     <div>
-                        <h2 class="font-semibold text-black">在线用户</h2>
-                        <p class="text-xs text-[#737373]" id="onlineBadge">0 人在线</p>
+                        <h2 class="font-semibold text-white">在线用户</h2>
+                        <p class="text-xs text-[#a3a3a3]" id="onlineBadge">0 人在线</p>
                     </div>
                 </div>
             </div>
@@ -218,20 +218,20 @@
         </aside>
         
         <!-- Main Chat Area -->
-        <main class="flex-1 flex flex-col min-w-0 bg-white">
+        <main class="flex-1 flex flex-col min-w-0 bg-[#0a0a0a]">
             <!-- Header -->
-            <header class="h-16 border-b border-[#e5e5e5] flex items-center justify-between px-4 bg-white">
+            <header class="h-16 border-b border-[#262626] flex items-center justify-between px-4 bg-[#0a0a0a]">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="md:hidden p-2 hover:bg-[#f5f5f5] rounded-lg transition-colors">
-                        <i data-lucide="menu" class="w-5 h-5 text-[#737373]"></i>
+                    <button onclick="toggleSidebar()" class="md:hidden p-2 hover:bg-[#171717] rounded-lg transition-colors">
+                        <i data-lucide="menu" class="w-5 h-5 text-[#a3a3a3]"></i>
                     </button>
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <h1 class="font-semibold text-black">局域网聊天室</h1>
+                        <h1 class="font-semibold text-white">局域网聊天室</h1>
                     </div>
                 </div>
                 <div class="text-right hidden sm:block">
-                    <div class="text-xs font-mono text-[#737373] bg-[#f5f5f5] px-3 py-1.5 rounded-lg" id="serverIp">
+                    <div class="text-xs font-mono text-[#a3a3a3] bg-[#171717] px-3 py-1.5 rounded-lg" id="serverIp">
                         192.168.1.181:3000
                     </div>
                 </div>
@@ -243,16 +243,16 @@
             </div>
             
             <!-- Input Area -->
-            <div class="p-4 border-t border-[#e5e5e5] bg-white">
+            <div class="p-4 border-t border-[#262626] bg-[#0a0a0a]">
                 <div class="flex items-end gap-3 max-w-4xl mx-auto">
                     <div class="flex gap-1">
-                        <button onclick="document.getElementById('imageInput').click()" class="p-3 bg-[#f5f5f5] hover:bg-[#e5e5e5] rounded-xl transition-colors btn-press" title="发送图片">
-                            <i data-lucide="image" class="w-5 h-5 text-[#737373]"></i>
+                        <button onclick="document.getElementById('imageInput').click()" class="p-3 bg-[#171717] hover:bg-[#262626] rounded-xl transition-colors btn-press" title="发送图片">
+                            <i data-lucide="image" class="w-5 h-5 text-[#a3a3a3]"></i>
                         </button>
                         <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="sendImage()">
                         
-                        <button onclick="document.getElementById('fileInput').click()" class="p-3 bg-[#f5f5f5] hover:bg-[#e5e5e5] rounded-xl transition-colors btn-press" title="发送文件">
-                            <i data-lucide="paperclip" class="w-5 h-5 text-[#737373]"></i>
+                        <button onclick="document.getElementById('fileInput').click()" class="p-3 bg-[#171717] hover:bg-[#262626] rounded-xl transition-colors btn-press" title="发送文件">
+                            <i data-lucide="paperclip" class="w-5 h-5 text-[#a3a3a3]"></i>
                         </button>
                         <input type="file" id="fileInput" class="hidden" onchange="sendFile()">
                     </div>
@@ -262,13 +262,13 @@
                             id="messageInput" 
                             placeholder="输入消息..." 
                             rows="1"
-                            class="w-full bg-[#f5f5f5] border border-[#e5e5e5] rounded-xl px-4 py-3 text-black placeholder-[#525252] input-focus transition-all resize-none pr-12"
+                            class="w-full bg-[#171717] border border-[#262626] rounded-xl px-4 py-3 text-white placeholder-[#525252] input-focus transition-all resize-none pr-12"
                             onkeydown="handleKeyDown(event)"
                             oninput="autoResize(this)"
                         ></textarea>
                     </div>
                     
-                    <button onclick="sendMessage()" class="p-3 bg-green-500 hover:bg-green-600 text-black rounded-xl transition-colors btn-press shadow-lg shadow-green-500/20">
+                    <button onclick="sendMessage()" class="p-3 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-colors btn-press shadow-lg shadow-green-500/20">
                         <i data-lucide="send" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -292,38 +292,19 @@
             })
             .catch(() => {});
         
-        // Restore username and auto login
+        // Restore username
         const savedName = localStorage.getItem('lanChatUsername');
+        if (savedName) {
+            document.getElementById('usernameInput').value = savedName;
+        }
         
-        function joinChat(name) {
-            userName = name || document.getElementById('usernameInput').value.trim() || '匿名用户';
+        function joinChat() {
+            const input = document.getElementById('usernameInput');
+            userName = input.value.trim() || '匿名用户';
             
             socket.emit('join', { name: userName });
             localStorage.setItem('lanChatUsername', userName);
             document.getElementById('loginOverlay').classList.add('hidden');
-            
-            // Show welcome back message if auto-login
-            if (name) {
-                console.log('欢迎回来，' + userName + '！');
-            }
-        }
-        
-        // Auto login if saved name exists
-        if (savedName) {
-            // Wait a moment for socket to connect, then auto login
-            setTimeout(() => {
-                if (socket.connected) {
-                    joinChat(savedName);
-                } else {
-                    // If socket not ready, wait for connection
-                    socket.once('connect', () => {
-                        joinChat(savedName);
-                    });
-                }
-            }, 100);
-        } else {
-            // No saved name, show login screen
-            document.getElementById('usernameInput').placeholder = '输入你的昵称';
         }
         
         function toggleSidebar() {
@@ -407,17 +388,17 @@
             
             let contentHtml = '';
             if (msg.type === 'text') {
-                contentHtml = `<div class="text-[#171717] leading-relaxed">${escapeHtml(msg.text)}</div>`;
+                contentHtml = `<div class="text-[#e5e5e5] leading-relaxed">${escapeHtml(msg.text)}</div>`;
             } else if (msg.type === 'image') {
                 contentHtml = `<img src="${msg.url}" class="max-w-[280px] max-h-[280px] rounded-lg cursor-pointer hover:opacity-90 transition-opacity" onclick="openImageModal('${msg.url}')">`;
             } else if (msg.type === 'file') {
                 contentHtml = `
-                    <a href="${msg.url}" class="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-[#e5e5e5] transition-colors group" download="${msg.originalname}">
+                    <a href="${msg.url}" class="flex items-center gap-3 p-3 bg-[#0a0a0a] rounded-lg hover:bg-[#262626] transition-colors group" download="${msg.originalname}">
                         <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
                             <i data-lucide="file-text" class="w-5 h-5 text-green-500"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div class="text-sm font-medium text-[#171717] truncate">${escapeHtml(msg.originalname)}</div>
+                            <div class="text-sm font-medium text-[#e5e5e5] truncate">${escapeHtml(msg.originalname)}</div>
                             <div class="text-xs text-[#525252]">${formatSize(msg.size)}</div>
                         </div>
                         <i data-lucide="download" class="w-4 h-4 text-[#525252] group-hover:text-green-500 transition-colors"></i>
@@ -427,15 +408,15 @@
             
             const html = `
                 <div class="flex ${isMe ? 'flex-row-reverse' : ''} gap-3 animate-fadeIn message-hover">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-black font-semibold text-sm flex-shrink-0">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
                         ${msg.user.name.charAt(0).toUpperCase()}
                     </div>
                     <div class="max-w-[70%]">
                         <div class="flex items-center gap-2 mb-1 ${isMe ? 'justify-end' : ''}">
-                            <span class="text-xs text-[#737373]">${escapeHtml(msg.user.name)}</span>
+                            <span class="text-xs text-[#a3a3a3]">${escapeHtml(msg.user.name)}</span>
                             <span class="text-xs text-[#525252]">${formatTime(msg.timestamp)}</span>
                         </div>
-                        <div class="${isMe ? 'bg-green-500 text-black' : 'bg-[#f5f5f5] text-[#171717]'} rounded-2xl ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'} px-4 py-3 shadow-sm">
+                        <div class="${isMe ? 'bg-green-500 text-white' : 'bg-[#171717] text-[#e5e5e5]'} rounded-2xl ${isMe ? 'rounded-tr-sm' : 'rounded-tl-sm'} px-4 py-3 shadow-sm">
                             ${contentHtml}
                         </div>
                     </div>
@@ -454,12 +435,12 @@
             badge.textContent = `${users.length} 人在线`;
             
             list.innerHTML = users.map(u => `
-                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#f5f5f5] transition-colors cursor-pointer group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-black font-semibold">
+                <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#171717] transition-colors cursor-pointer group">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-semibold">
                         ${u.name.charAt(0).toUpperCase()}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="text-sm font-medium text-[#171717] truncate">
+                        <div class="text-sm font-medium text-[#e5e5e5] truncate">
                             ${escapeHtml(u.name)} ${u.id === socket.id ? '<span class="text-xs text-green-500 ml-1">你</span>' : ''}
                         </div>
                         <div class="text-xs text-[#525252]">${u.ip}</div>
@@ -509,7 +490,7 @@
             const area = document.getElementById('chatArea');
             area.insertAdjacentHTML('beforeend', `
                 <div class="flex justify-center my-4 animate-fadeIn">
-                    <span class="text-xs text-[#525252] bg-[#f5f5f5] px-3 py-1 rounded-full">👋 ${data.user.name} 加入了聊天室</span>
+                    <span class="text-xs text-[#525252] bg-[#171717] px-3 py-1 rounded-full">👋 ${data.user.name} 加入了聊天室</span>
                 </div>
             `);
             area.scrollTop = area.scrollHeight;
@@ -520,7 +501,7 @@
             const area = document.getElementById('chatArea');
             area.insertAdjacentHTML('beforeend', `
                 <div class="flex justify-center my-4 animate-fadeIn">
-                    <span class="text-xs text-[#525252] bg-[#f5f5f5] px-3 py-1 rounded-full">👋 ${data.user.name} 离开了聊天室</span>
+                    <span class="text-xs text-[#525252] bg-[#171717] px-3 py-1 rounded-full">👋 ${data.user.name} 离开了聊天室</span>
                 </div>
             `);
             area.scrollTop = area.scrollHeight;

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="LAN Chat Logo" width="200" />
+</p>
+
 # 🌐 LAN Chat Room
 
 A real-time chat application for devices on the same local network (WiFi/LAN).
